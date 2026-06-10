@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso | Quiniela Mundial 2026</title>
+    <style>
+        :root {
+            --primary-color: #1b5e20; /* Verde oscuro */
+            --secondary-color: #fbc02d; /* Amarillo */
+            --bg-color: #f4f7f6;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: linear-gradient(135deg, rgba(27, 94, 32, 0.1) 0%, rgba(251, 192, 45, 0.1) 100%);
+        }
+
+        .login-card {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border-top: 5px solid var(--primary-color);
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+            letter-spacing: 10px;
+        }
+
+        .league-title {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(27, 94, 32, 0.2);
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn-submit:hover {
+            background-color: #144d18;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .footer-text {
+            margin-top: 25px;
+            font-size: 0.8rem;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="logo">🦅⚜️</div>
+        <h2 class="league-title">Grupo III, La Laguna</h2>
+        <h1>Quiniela 2026</h1>
+        <p>Ingresa tus datos y el código de invitación proporcionado por el administrador para unirte a la liga.</p>
+
+        <form id="joinForm">
+            <div class="input-group">
+                <label for="nombre">Nombre de usuario</label>
+                <input type="text" id="nombre" placeholder="Ej. Juan Pérez" required>
+            </div>
+
+            <div class="input-group">
+                <label for="codigo">Código de Invitación</label>
+                <input type="text" id="codigo" placeholder="Ingresa el código secreto" required style="text-transform: uppercase;">
+            </div>
+
+            <button type="submit" class="btn-submit">Validar y Entrar</button>
+            <div class="error-message" id="errorMessage">Código de invitación incorrecto. Por favor, verifica con el administrador.</div>
+        </form>
+        
+        <div class="footer-text">
+            Plataforma de pronósticos privada &copy; 2026
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('joinForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Evita que la página se recargue
+
+            const nombre = document.getElementById('nombre').value;
+            const codigo = document.getElementById('codigo').value.trim().toUpperCase();
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Aquí es donde en el futuro conectarás con tu base de datos (Ej: fetch('/api/validar-codigo'))
+            // Por ahora, simulamos que el código correcto es "MUNDIAL26"
+            const CODIGO_VALIDO = "MUNDIAL26";
+
+            if (codigo === CODIGO_VALIDO) {
+                errorMessage.style.display = 'none';
+                // Cambiar el botón a estado de carga o éxito
+                const btn = document.querySelector('.btn-submit');
+                btn.style.backgroundColor = 'var(--secondary-color)';
+                btn.style.color = '#333';
+                btn.textContent = '¡Acceso Concedido!';
+                
+                // Redirigir al dashboard principal después de 1 segundo
+                setTimeout(() => {
+                    alert(`¡Bienvenido a la liga, ${nombre}! Aquí serías redirigido al panel de pronósticos.`);
+                    // window.location.href = '/dashboard';
+                }, 1000);
+            } else {
+                // Mostrar error si el código no coincide
+                errorMessage.style.display = 'block';
+                document.getElementById('codigo').focus();
+            }
+        });
+    </script>
+</body>
+</html>
