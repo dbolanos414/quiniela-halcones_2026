@@ -4,564 +4,409 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiniela Mundial 2026 | Halcones</title>
-    <!-- Bibliotecas para generar PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
-            --primary: #1b5e20;      
-            --primary-light: #2e7d32;
-            --secondary: #fbc02d;    
-            --secondary-dark: #f57f17;
-            --dark: #212121;
-            --light: #f4f6f5;
-            --white: #ffffff;
-            --grey-light: #e0e0e0;
-            --grey-dark: #757575;
-            --success: #4caf50;
-            --error: #f44336;
+            --primary: #1b5e20; --primary-light: #2e7d32;
+            --secondary: #fbc02d; --secondary-dark: #f57f17;
+            --dark: #212121; --light: #f4f6f5; --white: #ffffff;
+            --grey-light: #e0e0e0; --grey-dark: #757575;
+            --success: #4caf50; --error: #f44336;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
         body { background-color: var(--light); color: var(--dark); line-height: 1.6; }
         .hidden { display: none !important; }
 
-        /* --- VISTA DE ACCESO (LOGIN) --- */
-        #login-view { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, rgba(27, 94, 32, 0.9) 0%, rgba(33, 33, 33, 0.95) 100%); padding: 20px; }
+        /* VISTA DE ACCESO */
+        #login-view { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, rgba(27, 94, 32, 0.9), rgba(33, 33, 33, 0.95)); padding: 20px; }
         .login-card { background: var(--white); padding: 40px 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 100%; max-width: 420px; text-align: center; border-top: 6px solid var(--secondary); }
-        .scout-badge { width: 80px; height: 80px; background: var(--primary); color: var(--secondary); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 40px; margin: 0 auto 20px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .scout-badge { width: 80px; height: 80px; background: var(--primary); color: var(--secondary); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 40px; margin: 0 auto 20px auto; }
         .login-card h1 { font-size: 2rem; color: var(--primary); margin-bottom: 5px; font-weight: 800; }
         .login-card h2 { font-size: 1.1rem; color: var(--grey-dark); margin-bottom: 25px; font-weight: 400; }
         .form-group { text-align: left; margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; color: var(--dark); }
-        .form-group input { width: 100%; padding: 12px 16px; border: 2px solid var(--grey-light); border-radius: 8px; font-size: 1rem; }
-        .form-group input:focus { outline: none; border-color: var(--primary); }
+        .form-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; }
+        .form-group input { width: 100%; padding: 12px; border: 2px solid var(--grey-light); border-radius: 8px; font-size: 1rem; }
         .btn-block { width: 100%; padding: 14px; background: var(--primary); color: var(--white); border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; }
-        .btn-block:hover { background: var(--primary-light); }
-        .error-alert { background: #ffebee; color: var(--error); padding: 10px; border-radius: 6px; font-size: 0.85rem; margin-top: 15px; display: none; font-weight: 600; }
-
-        /* --- VISTA PRINCIPAL (DASHBOARD) --- */
+        
+        /* DASHBOARD Y NAVEGACIÓN */
         #app-view { min-height: 100vh; display: flex; flex-direction: column; }
-        navbar { background: var(--primary); color: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 10px;}
+        navbar { background: var(--primary); color: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .nav-brand { font-weight: 800; font-size: 1.2rem; }
-        .nav-user { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .user-tag { background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border-left: 3px solid var(--secondary); }
-        .btn-header { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.4); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
-        .btn-header:hover { background: rgba(255,255,255,0.1); }
-        .btn-admin { background: var(--secondary); color: var(--dark); border: none; font-weight: bold; }
-
+        .user-tag { background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border-left: 3px solid var(--secondary); margin-right: 10px;}
+        .btn-logout { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.4); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+        
         .tabs-container { background: var(--white); display: flex; justify-content: center; border-bottom: 2px solid var(--grey-light); flex-wrap: wrap; }
         .tab-btn { padding: 12px 15px; background: none; border: none; font-size: 0.95rem; font-weight: 600; color: var(--grey-dark); cursor: pointer; position: relative; }
-        .tab-btn:hover, .tab-btn.active { color: var(--primary); }
+        .tab-btn.active { color: var(--primary); }
         .tab-btn.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 3px; background: var(--secondary); }
 
         main { max-width: 900px; width: 100%; margin: 30px auto; padding: 0 20px; flex: 1; }
-        .view-section { animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .section-header { margin-bottom: 20px; color: var(--primary); font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-        .btn-pdf { background: var(--secondary); color: var(--dark); border: none; padding: 8px 15px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
+        .section-header { margin-bottom: 20px; color: var(--primary); font-size: 1.5rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center;}
         
-        /* Tarjetas de Partidos */
-        .match-card { background: var(--white); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border-left: 5px solid var(--primary); }
+        /* TARJETAS DE PARTIDO */
+        .match-card { background: var(--white); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 5px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
         .match-meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--grey-dark); margin-bottom: 15px; border-bottom: 1px dashed var(--grey-light); padding-bottom: 8px; font-weight: 600; }
-        .match-body { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-        .team-box { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .team-flag { font-size: 1.8rem; margin-bottom: 5px; }
-        .team-name { font-weight: 700; font-size: 1rem; }
+        .match-body { display: flex; align-items: center; justify-content: space-between; text-align: center; }
+        .team-box { flex: 1; font-weight: 700; }
+        .team-logo { width: 40px; height: 40px; object-fit: contain; margin-bottom: 5px; }
         
-        .prediction-box, .real-score-box { display: flex; align-items: center; gap: 10px; background: var(--light); padding: 10px 15px; border-radius: 12px; }
-        .real-score-box { background: #e8f5e9; border: 1px solid #c8e6c9; }
+        .prediction-box { display: flex; gap: 10px; background: var(--light); padding: 10px; border-radius: 12px; align-items: center;}
+        .input-score { width: 45px; height: 45px; text-align: center; font-size: 1.2rem; font-weight: bold; border: 2px solid var(--grey-light); border-radius: 6px; }
+        .score-display { font-size: 1.5rem; font-weight: 900; color: var(--primary); }
+        .real-score-badge { background: #e8f5e9; padding: 5px 15px; border-radius: 20px; color: var(--primary); font-weight: 800; border: 1px solid #c8e6c9;}
         
-        .input-score { width: 50px; height: 50px; text-align: center; font-size: 1.4rem; font-weight: 800; border: 2px solid var(--grey-light); border-radius: 8px; }
-        .score-display { font-size: 1.6rem; font-weight: 800; color: var(--primary); width: 40px; text-align: center;}
-        
-        .match-footer { margin-top: 15px; display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
-        .btn-save { background: var(--secondary); border: none; padding: 8px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; }
-        .admin-panel { background: #fff3e0; border: 1px solid #ffe0b2; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 0.9rem; }
-
-        /* Tablas Genéricas (Posiciones y Grupos) */
-        .table-responsive { overflow-x: auto; background: var(--white); border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 30px;}
+        /* TABLAS Y ESTADOS */
+        .loader { text-align: center; padding: 40px; color: var(--grey-dark); font-weight: bold; }
+        .table-responsive { overflow-x: auto; background: var(--white); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 30px;}
         .data-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        .data-table th { background: var(--primary); color: var(--white); text-align: left; padding: 12px 15px; font-size: 0.9rem; }
-        .data-table td { padding: 12px 15px; border-bottom: 1px solid var(--grey-light); font-size: 0.95rem; }
-        .data-table th.center, .data-table td.center { text-align: center; }
-        .data-table tr:last-child td { border-bottom: none; }
+        .data-table th { background: var(--primary); color: var(--white); text-align: left; padding: 12px; }
+        .data-table td { padding: 12px; border-bottom: 1px solid var(--grey-light); }
+        .group-title { background: var(--secondary); padding: 8px 15px; font-weight: bold; border-radius: 8px 8px 0 0; margin-top: 20px;}
         
-        /* Específico Grupos */
-        .group-title { background: var(--secondary); padding: 8px 15px; font-weight: bold; border-radius: 8px 8px 0 0; color: var(--dark); margin-top: 20px;}
-        .pts-col { font-weight: 900; color: var(--primary); }
-
-        .rank-badge { display: inline-block; width: 28px; height: 28px; text-align: center; line-height: 28px; border-radius: 50%; font-weight: 700; background: var(--light); }
-        .rank-1 .rank-badge { background: #ffd700; color: #5d4037; }
-        .rank-2 .rank-badge { background: #c0c0c0; color: #455a64; }
-        .rank-3 .rank-badge { background: #cd7f32; color: #fff; }
+        .btn-action { background: var(--secondary); border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- LOGIN -->
     <div id="login-view">
         <div class="login-card">
             <div class="scout-badge">🦅</div>
             <h1>LA LAGUNA 2026</h1>
-            <h2>Quiniela • Grupo III Halcones</h2>
-            
+            <h2>Quiniela • Halcones (En Vivo)</h2>
             <form id="login-form">
                 <div class="form-group">
-                    <label>Tu Nombre de Usuario</label>
-                    <input type="text" id="username" placeholder="Ej. Daniel / Toño" required>
+                    <label>Tu Nombre</label>
+                    <input type="text" id="username" required>
                 </div>
                 <div class="form-group">
                     <label>Código de Invitación</label>
                     <input type="text" id="group-code" placeholder="MUNDIAL26-HALCONES" required style="text-transform: uppercase;">
                 </div>
                 <button type="submit" class="btn-block">Ingresar</button>
-                <div class="error-alert" id="login-error">Código incorrecto.</div>
             </form>
         </div>
     </div>
 
-    <!-- DASHBOARD -->
     <div id="app-view" class="hidden">
         <navbar>
-            <div class="nav-brand">🦅 Halcones 2026</div>
-            <div class="nav-user">
-                <div class="user-tag" id="user-display-name">Usuario</div>
-                <button class="btn-header btn-admin" id="btn-admin-login">⚙️ Acceso Admin</button>
-                <button class="btn-header" id="btn-logout">Salir</button>
+            <div class="nav-brand">🦅 Halcones</div>
+            <div>
+                <span class="user-tag" id="user-display-name"></span>
+                <button class="btn-logout" id="btn-logout">Salir</button>
             </div>
         </navbar>
 
         <div class="tabs-container">
-            <button class="tab-btn active" data-target="partidos-section">⚽ Pronósticos</button>
+            <button class="tab-btn active" data-target="partidos-section">⚽ Mis Pronósticos</button>
             <button class="tab-btn" data-target="calendario-section">📅 Calendario Oficial</button>
             <button class="tab-btn" data-target="grupos-section">📊 Fase de Grupos</button>
             <button class="tab-btn" data-target="clasificacion-section">🏆 Tabla General</button>
-            <button class="tab-btn" data-target="reglas-section">📋 Reglas</button>
         </div>
 
         <main>
-            <!-- SECCIÓN PRONÓSTICOS -->
+            <div id="api-status" style="background: #e3f2fd; color: #1565c0; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; text-align: center;">
+                Sincronizando con los servidores de la FIFA...
+            </div>
+
+            <!-- PRONÓSTICOS -->
             <section id="partidos-section" class="view-section">
-                <div class="section-header">
-                    <span>Tus Predicciones</span>
-                    <span id="admin-indicator" style="font-size: 0.8rem; color: var(--error); display: none;">Modo Administrador Activo</span>
-                </div>
-                <div id="matches-list-container"></div>
+                <div class="section-header"><span>Tus Predicciones</span></div>
+                <div id="matches-list-container"><div class="loader">Cargando partidos...</div></div>
             </section>
 
-            <!-- SECCIÓN CALENDARIO REAL -->
+            <!-- CALENDARIO OFICIAL -->
             <section id="calendario-section" class="view-section hidden">
-                <div class="section-header"><span>Partidos Oficiales (FIFA)</span></div>
-                <div id="calendario-list-container" style="display: flex; flex-direction: column; gap: 15px;"></div>
+                <div class="section-header"><span>Partidos Oficiales</span></div>
+                <div id="calendario-list-container"><div class="loader">Cargando calendario...</div></div>
             </section>
 
-            <!-- SECCIÓN GRUPOS (NUEVA) -->
+            <!-- FASE DE GRUPOS -->
             <section id="grupos-section" class="view-section hidden">
                 <div class="section-header"><span>Clasificación por Grupos</span></div>
-                <p style="font-size: 0.9rem; margin-bottom: 20px; color: var(--grey-dark);">Esta tabla se actualiza automáticamente según los resultados reales ingresados por el administrador.</p>
-                <div id="grupos-tables-container"></div>
+                <div id="grupos-tables-container"><div class="loader">Calculando posiciones...</div></div>
             </section>
 
-            <!-- SECCIÓN CLASIFICACIÓN GENERAL -->
+            <!-- CLASIFICACIÓN GENERAL -->
             <section id="clasificacion-section" class="view-section hidden">
                 <div class="section-header">
                     <span>Ranking de Participantes</span>
-                    <button class="btn-pdf" onclick="descargarPDF()">📥 Descargar PDF</button>
+                    <button class="btn-action" onclick="descargarPDF()">📥 PDF</button>
                 </div>
                 <div class="table-responsive">
                     <table class="data-table">
-                        <thead>
-                            <tr><th>Pos</th><th>Participante</th><th class="center">Jugados</th><th class="center">Puntos</th></tr>
-                        </thead>
+                        <thead><tr><th>Pos</th><th>Participante</th><th style="text-align:center;">Jugados</th><th style="text-align:right;">Puntos</th></tr></thead>
                         <tbody id="leaderboard-tbody"></tbody>
                     </table>
-                </div>
-            </section>
-
-            <!-- SECCIÓN REGLAS -->
-            <section id="reglas-section" class="view-section hidden">
-                <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.04);">
-                    <h3 style="color: var(--primary); margin-bottom: 15px;">Sistema de Puntuación</h3>
-                    <ul>
-                        <li style="margin-bottom: 10px;"><strong>+3 Puntos:</strong> Marcador Exacto.</li>
-                        <li style="margin-bottom: 10px;"><strong>+1 Punto:</strong> Acertar al ganador o empate (Tendencia).</li>
-                        <li><strong>0 Puntos:</strong> Resultado incorrecto.</li>
-                    </ul>
                 </div>
             </section>
         </main>
     </div>
 
     <script>
+        // =========================================================
+        // CONFIGURACIÓN DE LA API (¡AQUÍ PONES TU CLAVE!)
+        // =========================================================
+        const API_KEY = "02d52ad09dacaaa599c59c1690d5ee4b"; // Regístrate en api-sports.io para obtener una.
+        const API_HOST = "v3.football.api-sports.io";
+        const LEAGUE_ID = 1; // ID 1 corresponde a la World Cup en esta API
+        const SEASON = 2026; 
         const SECRET_CODE = "MUNDIAL26-HALCONES";
 
-        // ESTRUCTURA BASE DE GRUPOS (Muestra robusta para el Mundial de 48 equipos, 12 grupos)
-        const PARTIDOS_INICIALES = [
-            // GRUPO A
-            { id: 1, grupo: "A", local: "México", flagLocal: "🇲🇽", visitante: "Polonia", flagVisitante: "🇵🇱", sede: "Azteca, CDMX", fecha: "11 Jun" },
-            { id: 2, grupo: "A", local: "A3", flagLocal: "🏳️", visitante: "A4", flagVisitante: "🏳️", sede: "Guadalajara", fecha: "11 Jun" },
-            // GRUPO B
-            { id: 3, grupo: "B", local: "Canadá", flagLocal: "🇨🇦", visitante: "Marruecos", flagVisitante: "🇲🇦", sede: "Toronto", fecha: "12 Jun" },
-            { id: 4, grupo: "B", local: "B3", flagLocal: "🏳️", visitante: "B4", flagVisitante: "🏳️", sede: "Vancouver", fecha: "12 Jun" },
-            // GRUPO C
-            { id: 5, grupo: "C", local: "EE.UU.", flagLocal: "🇺🇸", visitante: "Gales", flagVisitante: "🏴󠁧󠁢󠁷󠁬󠁳󠁿", sede: "Los Angeles", fecha: "12 Jun" },
-            { id: 6, grupo: "C", local: "C3", flagLocal: "🏳️", visitante: "C4", flagVisitante: "🏳️", sede: "Seattle", fecha: "13 Jun" },
-            // GRUPO D
-            { id: 7, grupo: "D", local: "Argentina", flagLocal: "🇦🇷", visitante: "D2", flagVisitante: "🏳️", sede: "Miami", fecha: "13 Jun" },
-            // GRUPO E
-            { id: 8, grupo: "E", local: "España", flagLocal: "🇪🇸", visitante: "E2", flagVisitante: "🏳️", sede: "Nueva York", fecha: "14 Jun" },
-            // GRUPO F
-            { id: 9, grupo: "F", local: "Francia", flagLocal: "🇫🇷", visitante: "F2", flagVisitante: "🏳️", sede: "Dallas", fecha: "14 Jun" },
-            // GRUPO G a L (Representativos)
-            { id: 10, grupo: "G", local: "Brasil", flagLocal: "🇧🇷", visitante: "G2", flagVisitante: "🏳️", sede: "Houston", fecha: "15 Jun" },
-            { id: 11, grupo: "H", local: "Alemania", flagLocal: "🇩🇪", visitante: "H2", flagVisitante: "🏳️", sede: "Atlanta", fecha: "15 Jun" },
-            { id: 12, grupo: "I", local: "Inglaterra", flagLocal: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", visitante: "I2", flagVisitante: "🏳️", sede: "Boston", fecha: "16 Jun" },
-            { id: 13, grupo: "J", local: "J1", flagLocal: "🏳️", visitante: "J2", flagVisitante: "🏳️", sede: "Filadelfia", fecha: "16 Jun" },
-            { id: 14, grupo: "K", local: "K1", flagLocal: "🏳️", visitante: "K2", flagVisitante: "🏳️", sede: "Kansas City", fecha: "17 Jun" },
-            { id: 15, grupo: "L", local: "L1", flagLocal: "🏳️", visitante: "L2", flagVisitante: "🏳️", sede: "Monterrey", fecha: "17 Jun" }
-        ];
+        let currentUser = localStorage.getItem('quiniela_current_user');
+        let partidosOficiales = [];
+        let resultadosReales = {}; // Se llenará automáticamente con la API
 
-        let currentUser = localStorage.getItem('quiniela_current_user') || null;
-        let adminModeActive = false;
-
+        // INICIALIZACIÓN
         function init() {
-            if (!localStorage.getItem('resultados_reales')) localStorage.setItem('resultados_reales', JSON.stringify({}));
-            if (!localStorage.getItem('quiniela_users_list')) localStorage.setItem('quiniela_users_list', JSON.stringify([]));
-            
-            if (currentUser) showDashboard();
-            setupTabs();
-        }
-
-        // SISTEMA DE LOGIN Y REGISTRO DE USUARIOS LOCALES
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const user = document.getElementById('username').value.trim();
-            const code = document.getElementById('group-code').value.trim().toUpperCase();
-
-            if (code === SECRET_CODE) {
-                document.getElementById('login-error').style.display = 'none';
-                currentUser = user;
-                localStorage.setItem('quiniela_current_user', user);
-                
-                // Guardar usuario en la lista global si no existe
-                let usersList = JSON.parse(localStorage.getItem('quiniela_users_list'));
-                if(!usersList.includes(user)) {
-                    usersList.push(user);
-                    localStorage.setItem('quiniela_users_list', JSON.stringify(usersList));
-                }
-                
+            if(!localStorage.getItem('quiniela_users_list')) localStorage.setItem('quiniela_users_list', JSON.stringify([]));
+            if (currentUser) {
                 showDashboard();
-            } else {
-                document.getElementById('login-error').style.display = 'block';
             }
-        });
-
-        document.getElementById('btn-logout').addEventListener('click', () => {
-            localStorage.removeItem('quiniela_current_user'); currentUser = null; adminModeActive = false;
-            document.getElementById('app-view').classList.add('hidden'); 
-            document.getElementById('login-view').classList.remove('hidden'); 
-            document.getElementById('login-form').reset();
-        });
-
-        // ACCESO ADMINISTRADOR
-        document.getElementById('btn-admin-login').addEventListener('click', function() {
-            if (!adminModeActive) {
-                if (currentUser !== "Daniel") { alert("Acceso denegado. Solo el usuario 'Daniel' puede administrar."); return; }
-                const pwd = prompt("Ingrese la clave de administrador:");
-                if (pwd === "m0rf0s3s") {
-                    adminModeActive = true;
-                    document.getElementById('admin-indicator').style.display = 'inline';
-                    this.textContent = "❌ Cerrar Modo Admin";
-                    this.style.background = "var(--error)";
-                    this.style.color = "white";
-                    renderMatches();
-                } else { alert("Clave incorrecta."); }
-            } else {
-                adminModeActive = false;
-                document.getElementById('admin-indicator').style.display = 'none';
-                this.textContent = "⚙️ Acceso Admin";
-                this.style.background = "var(--secondary)";
-                this.style.color = "var(--dark)";
-                renderMatches();
-            }
-        });
-
-        function showDashboard() {
-            document.getElementById('login-view').classList.add('hidden'); 
-            document.getElementById('app-view').classList.remove('hidden');
-            document.getElementById('user-display-name').textContent = currentUser;
             
-            // Ocultar botón de admin si no es Daniel
-            document.getElementById('btn-admin-login').style.display = (currentUser === "Daniel") ? 'inline-block' : 'none';
-
-            renderMatches(); renderCalendario(); renderGroupStandings(); calculateLeaderboard();
-        }
-
-        function setupTabs() {
+            // Navegación de pestañas
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                     document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
                     this.classList.add('active');
                     document.getElementById(this.dataset.target).classList.remove('hidden');
-                    
-                    if (this.dataset.target === 'clasificacion-section') calculateLeaderboard();
-                    if (this.dataset.target === 'grupos-section') renderGroupStandings();
                 });
             });
         }
 
-        // RENDERIZAR PARTIDOS Y MODO ADMIN
-        function renderMatches() {
+        // LOGIN
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value.trim();
+            const code = document.getElementById('group-code').value.trim().toUpperCase();
+
+            if (code === SECRET_CODE) {
+                currentUser = user;
+                localStorage.setItem('quiniela_current_user', user);
+                
+                let usersList = JSON.parse(localStorage.getItem('quiniela_users_list'));
+                if(!usersList.includes(user)) { usersList.push(user); localStorage.setItem('quiniela_users_list', JSON.stringify(usersList)); }
+                
+                showDashboard();
+            } else { alert("Código de acceso incorrecto."); }
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            localStorage.removeItem('quiniela_current_user'); currentUser = null;
+            location.reload();
+        });
+
+        function showDashboard() {
+            document.getElementById('login-view').classList.add('hidden'); 
+            document.getElementById('app-view').classList.remove('hidden');
+            document.getElementById('user-display-name').textContent = currentUser;
+            fetchDataFromAPI();
+        }
+
+        // =========================================================
+        // MOTOR DE CONEXIÓN CON LA API DE DEPORTES
+        // =========================================================
+        async function fetchDataFromAPI() {
+            const statusDiv = document.getElementById('api-status');
+            
+            // MOCK DE EMERGENCIA (Se ejecuta si no has puesto tu API Key real)
+            if (API_KEY === "02d52ad09dacaaa599c59c1690d5ee4b") {
+                statusDiv.innerHTML = "⚠️ MODO PRUEBA: Falta configurar la API Key. Mostrando datos de simulación.";
+                statusDiv.style.background = "#fff3e0"; statusDiv.style.color = "#e65100";
+                
+                // Generamos datos falsos para que no se rompa la app
+                partidosOficiales = [
+                    { id: 1, grupo: "A", local: "México", logoL: "https://media.api-sports.io/football/teams/16.png", visitante: "Polonia", logoV: "https://media.api-sports.io/football/teams/24.png", fecha: "2026-06-11", status: "Match Finished", golesL: 2, golesV: 1 },
+                    { id: 2, grupo: "B", local: "Canadá", logoL: "https://media.api-sports.io/football/teams/5535.png", visitante: "Marruecos", logoV: "https://media.api-sports.io/football/teams/31.png", fecha: "2026-06-12", status: "Not Started", golesL: null, golesV: null }
+                ];
+            } else {
+                // LLAMADA REAL A LA API
+                try {
+                    const response = await fetch(`https://${API_HOST}/fixtures?league=${LEAGUE_ID}&season=${SEASON}`, {
+                        method: "GET",
+                        headers: { "x-rapidapi-host": API_HOST, "x-rapidapi-key": API_KEY }
+                    });
+                    const data = await response.json();
+                    
+                    if(data.errors && data.errors.length > 0) throw new Error("Error en la API Key o permisos.");
+                    
+                    // Transformar la compleja respuesta de la API a nuestro modelo simplificado
+                    partidosOficiales = data.response.map(match => {
+                        return {
+                            id: match.fixture.id,
+                            grupo: match.league.round.replace('Group Stage - ', ''), // Extrae la letra del grupo
+                            local: match.teams.home.name,
+                            logoL: match.teams.home.logo,
+                            visitante: match.teams.away.name,
+                            logoV: match.teams.away.logo,
+                            fecha: new Date(match.fixture.date).toLocaleDateString(),
+                            status: match.fixture.status.long,
+                            golesL: match.goals.home,
+                            golesV: match.goals.away
+                        };
+                    });
+                    statusDiv.innerHTML = "✅ Conectado a la base de datos oficial en vivo.";
+                    statusDiv.style.background = "#e8f5e9"; statusDiv.style.color = "#2e7d32";
+                } catch (error) {
+                    console.error("Error fetching API:", error);
+                    statusDiv.innerHTML = "❌ Fallo al conectar con la API. Revisa tu consola.";
+                    return;
+                }
+            }
+
+            // Procesar resultados oficiales automatizados
+            resultadosReales = {};
+            partidosOficiales.forEach(p => {
+                if(p.status === "Match Finished" || p.golesL !== null) {
+                    resultadosReales[p.id] = { l: p.golesL, v: p.golesV };
+                }
+            });
+
+            // Disparar las actualizaciones de las vistas
+            renderMatchesUI();
+            renderCalendarioUI();
+            renderGruposUI();
+            calculateLeaderboard();
+        }
+
+        // =========================================================
+        // RENDERIZADO DE VISTAS CON LOS DATOS DE LA API
+        // =========================================================
+        function renderMatchesUI() {
             const container = document.getElementById('matches-list-container');
             container.innerHTML = '';
-            const resultadosReales = JSON.parse(localStorage.getItem('resultados_reales'));
             const userPreds = JSON.parse(localStorage.getItem(`pred_${currentUser}`)) || {};
 
-            PARTIDOS_INICIALES.forEach(match => {
-                const matchPred = userPreds[match.id] || { l: '', v: '' };
-                const realScore = resultadosReales[match.id];
+            partidosOficiales.forEach(match => {
+                const pred = userPreds[match.id] || { l: '', v: '' };
+                const isFinished = resultadosReales[match.id] !== undefined;
                 
                 const card = document.createElement('div'); card.className = 'match-card';
-                let inputsHTML = '';
                 
-                if (realScore && !adminModeActive) {
-                    inputsHTML = `
-                        <div class="real-score-box">
-                            <span class="score-display">${matchPred.l !== '' ? matchPred.l : '-'}</span>
-                            <span style="font-weight:800; color:var(--grey-dark); font-size:0.8rem;">TÚ</span>
-                            <span class="score-display">${matchPred.v !== '' ? matchPred.v : '-'}</span>
-                        </div>
-                        <div style="font-size: 0.8rem; color: var(--primary); text-align: center; margin-top: 5px; font-weight:bold;">
-                            Oficial: ${realScore.l} - ${realScore.v}
-                        </div>`;
-                } else {
-                    inputsHTML = `
-                        <div class="prediction-box">
-                            <input type="number" class="input-score" id="pred-l-${match.id}" min="0" value="${matchPred.l}">
-                            <span style="font-weight:800; color:var(--grey-dark);">VS</span>
-                            <input type="number" class="input-score" id="pred-v-${match.id}" min="0" value="${matchPred.v}">
-                        </div>`;
-                }
-
-                let adminPanelHTML = adminModeActive ? `
-                    <div class="admin-panel">
-                        <h4>⚙️ Marcador Oficial (Admin)</h4>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <input type="number" style="width:50px; text-align:center;" id="real-l-${match.id}" value="${realScore ? realScore.l : ''}" onchange="saveRealResult(${match.id})">
-                            <span>VS</span>
-                            <input type="number" style="width:50px; text-align:center;" id="real-v-${match.id}" value="${realScore ? realScore.v : ''}" onchange="saveRealResult(${match.id})">
-                        </div>
-                    </div>` : '';
+                let actionArea = isFinished ? `
+                    <div style="text-align:center; padding:10px; background:#f5f5f5; border-radius:8px;">
+                        <div style="font-size:0.8rem; color:#666; margin-bottom:5px;">Resultado Oficial FIFA</div>
+                        <div class="score-display">${resultadosReales[match.id].l} - ${resultadosReales[match.id].v}</div>
+                        <div style="font-size:0.85rem; margin-top:5px;">Tu pronóstico fue: <b>${pred.l !== '' ? pred.l : '-'} a ${pred.v !== '' ? pred.v : '-'}</b></div>
+                    </div>
+                ` : `
+                    <div class="prediction-box">
+                        <input type="number" id="pl-${match.id}" class="input-score" value="${pred.l}">
+                        <span>VS</span>
+                        <input type="number" id="pv-${match.id}" class="input-score" value="${pred.v}">
+                        <button class="btn-action" style="margin-left:auto;" onclick="savePrediction(${match.id})">Guardar</button>
+                    </div>
+                `;
 
                 card.innerHTML = `
-                    <div class="match-meta"><span>📅 ${match.fecha} | Grupo ${match.grupo}</span><span>📍 ${match.sede}</span></div>
-                    <div class="match-body">
-                        <div class="team-box"><div class="team-flag">${match.flagLocal}</div><div class="team-name">${match.local}</div></div>
-                        ${inputsHTML}
-                        <div class="team-box"><div class="team-flag">${match.flagVisitante}</div><div class="team-name">${match.visitante}</div></div>
+                    <div class="match-meta"><span>📅 ${match.fecha} | Grupo ${match.grupo}</span><span>${match.status}</span></div>
+                    <div class="match-body" style="margin-bottom:15px;">
+                        <div class="team-box"><img src="${match.logoL}" class="team-logo"><br>${match.local}</div>
+                        <div class="team-box"><img src="${match.logoV}" class="team-logo"><br>${match.visitante}</div>
                     </div>
-                    ${(!realScore || adminModeActive) ? `
-                    <div class="match-footer">
-                        <span id="status-${match.id}" style="font-size: 0.85rem; color: var(--success); opacity: 0; transition: 0.3s;">✓ Guardado</span>
-                        <button class="btn-save" onclick="savePrediction(${match.id})">Guardar</button>
-                    </div>` : ''}
-                    ${adminPanelHTML}
+                    ${actionArea}
                 `;
                 container.appendChild(card);
             });
         }
 
-        // RENDERIZAR CALENDARIO OFICIAL
-        function renderCalendario() {
+        function renderCalendarioUI() {
             const container = document.getElementById('calendario-list-container');
-            container.innerHTML = '';
-            const resReales = JSON.parse(localStorage.getItem('resultados_reales'));
-
-            PARTIDOS_INICIALES.forEach(match => {
-                const rs = resReales[match.id];
-                const score = rs ? `<span style="font-weight:800; color:var(--primary); font-size:1.2rem; background:var(--light); padding:5px 15px; border-radius:20px;">${rs.l} - ${rs.v}</span>` 
-                                 : `<span style="color:var(--grey-dark); font-size:0.9rem; font-style:italic;">Pendiente</span>`;
-
-                const div = document.createElement('div');
-                div.style.cssText = 'background:var(--white); padding:15px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; border-left:4px solid var(--secondary); box-shadow:0 2px 5px rgba(0,0,0,0.05);';
-                div.innerHTML = `
+            container.innerHTML = partidosOficiales.map(m => `
+                <div style="background:white; padding:15px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border-left:4px solid var(--primary);">
                     <div>
-                        <div style="font-size:0.8rem; color:#777; margin-bottom:4px;">Gpo ${match.grupo} | ${match.fecha}</div>
-                        <div style="font-weight:700; font-size:1.1rem;">${match.flagLocal} ${match.local} vs ${match.visitante} ${match.flagVisitante}</div>
+                        <div style="font-size:0.8rem; color:#888;">Grupo ${m.grupo} - ${m.fecha}</div>
+                        <div style="font-weight:bold; display:flex; align-items:center; gap:10px;">
+                            <img src="${m.logoL}" width="20"> ${m.local} vs ${m.visitante} <img src="${m.logoV}" width="20">
+                        </div>
                     </div>
-                    <div>${score}</div>
-                `;
-                container.appendChild(div);
-            });
+                    <div>
+                        ${resultadosReales[m.id] ? `<span class="real-score-badge">${resultadosReales[m.id].l} - ${resultadosReales[m.id].v}</span>` : `<span style="font-size:0.9rem; color:#999;">${m.status}</span>`}
+                    </div>
+                </div>
+            `).join('');
         }
 
-        // MOTOR DE CÁLCULO DE GRUPOS
-        function renderGroupStandings() {
+        function renderGruposUI() {
             const container = document.getElementById('grupos-tables-container');
             container.innerHTML = '';
-            const resReales = JSON.parse(localStorage.getItem('resultados_reales'));
             let groups = {};
 
-            // Inicializar equipos y procesar resultados
-            PARTIDOS_INICIALES.forEach(p => {
+            partidosOficiales.forEach(p => {
                 if(!groups[p.grupo]) groups[p.grupo] = {};
-                if(!groups[p.grupo][p.local]) groups[p.grupo][p.local] = { flag: p.flagLocal, pj:0, pg:0, pe:0, pp:0, gf:0, gc:0, dif:0, pts:0 };
-                if(!groups[p.grupo][p.visitante]) groups[p.grupo][p.visitante] = { flag: p.flagVisitante, pj:0, pg:0, pe:0, pp:0, gf:0, gc:0, dif:0, pts:0 };
+                if(!groups[p.grupo][p.local]) groups[p.grupo][p.local] = { logo: p.logoL, pj:0, pts:0, dif:0 };
+                if(!groups[p.grupo][p.visitante]) groups[p.grupo][p.visitante] = { logo: p.logoV, pj:0, pts:0, dif:0 };
 
-                let real = resReales[p.id];
-                if(real) {
-                    let loc = groups[p.grupo][p.local], vis = groups[p.grupo][p.visitante];
-                    loc.pj++; loc.gf+=real.l; loc.gc+=real.v; loc.dif+=(real.l-real.v);
-                    vis.pj++; vis.gf+=real.v; vis.gc+=real.l; vis.dif+=(real.v-real.l);
-                    
-                    if(real.l > real.v) { loc.pts+=3; loc.pg++; vis.pp++; }
-                    else if(real.l < real.v) { vis.pts+=3; vis.pg++; loc.pp++; }
-                    else { loc.pts+=1; vis.pts+=1; loc.pe++; vis.pe++; }
+                if(resultadosReales[p.id]) {
+                    let real = resultadosReales[p.id], loc = groups[p.grupo][p.local], vis = groups[p.grupo][p.visitante];
+                    loc.pj++; vis.pj++;
+                    loc.dif += (real.l - real.v); vis.dif += (real.v - real.l);
+                    if(real.l > real.v) loc.pts+=3; else if(real.l < real.v) vis.pts+=3; else { loc.pts+=1; vis.pts+=1; }
                 }
             });
 
-            // Generar tablas HTML por grupo
             Object.keys(groups).sort().forEach(gKey => {
                 let teams = Object.keys(groups[gKey]).map(name => ({ name, ...groups[gKey][name] }));
-                // Ordenar por Puntos, Diferencia de Goles, Goles a Favor
-                teams.sort((a, b) => b.pts - a.pts || b.dif - a.dif || b.gf - a.gf);
-
-                let tbody = teams.map((t, i) => `
-                    <tr style="${i < 2 ? 'background-color: rgba(76, 175, 80, 0.05);' : ''}">
-                        <td>${i+1}</td>
-                        <td style="font-weight:bold;">${t.flag} ${t.name}</td>
-                        <td class="center">${t.pj}</td><td class="center">${t.pg}</td><td class="center">${t.pe}</td>
-                        <td class="center">${t.pp}</td><td class="center">${t.dif}</td>
-                        <td class="center pts-col">${t.pts}</td>
-                    </tr>
-                `).join('');
-
-                container.innerHTML += `
-                    <div class="group-title">Grupo ${gKey}</div>
-                    <div class="table-responsive" style="margin-bottom: 20px; border-radius: 0 0 12px 12px;">
-                        <table class="data-table">
-                            <thead>
-                                <tr><th>#</th><th>Equipo</th><th class="center">PJ</th><th class="center">G</th><th class="center">E</th><th class="center">P</th><th class="center">DIF</th><th class="center">PTS</th></tr>
-                            </thead>
-                            <tbody>${tbody}</tbody>
-                        </table>
-                    </div>
-                `;
+                teams.sort((a, b) => b.pts - a.pts || b.dif - a.dif);
+                
+                let tbody = teams.map((t, i) => `<tr><td>${i+1}</td><td><img src="${t.logo}" width="20" style="vertical-align:middle; margin-right:5px;">${t.name}</td><td style="text-align:center;">${t.pj}</td><td style="text-align:center;">${t.dif}</td><td style="text-align:center; font-weight:bold; color:var(--primary);">${t.pts}</td></tr>`).join('');
+                
+                container.innerHTML += `<div class="group-title">Grupo ${gKey}</div><div class="table-responsive"><table class="data-table"><thead><tr><th>#</th><th>Equipo</th><th style="text-align:center;">PJ</th><th style="text-align:center;">DIF</th><th style="text-align:center;">PTS</th></tr></thead><tbody>${tbody}</tbody></table></div>`;
             });
         }
 
-        // GUARDADO DE DATOS
-        window.savePrediction = function(matchId) {
-            const valL = document.getElementById(`pred-l-${matchId}`).value;
-            const valV = document.getElementById(`pred-v-${matchId}`).value;
-            if (valL === '' || valV === '') { alert("Ingresa ambos marcadores."); return; }
-            let userPreds = JSON.parse(localStorage.getItem(`pred_${currentUser}`)) || {};
-            userPreds[matchId] = { l: parseInt(valL), v: parseInt(valV) };
-            localStorage.setItem(`pred_${currentUser}`, JSON.stringify(userPreds));
-            document.getElementById(`status-${matchId}`).style.opacity = '1';
-            setTimeout(() => { document.getElementById(`status-${matchId}`).style.opacity = '0'; }, 2000);
-        };
+        window.savePrediction = function(id) {
+            const l = document.getElementById(`pl-${id}`).value;
+            const v = document.getElementById(`pv-${id}`).value;
+            if(l==='' || v==='') return alert("Llenar ambos campos");
+            let preds = JSON.parse(localStorage.getItem(`pred_${currentUser}`)) || {};
+            preds[id] = {l: parseInt(l), v: parseInt(v)};
+            localStorage.setItem(`pred_${currentUser}`, JSON.stringify(preds));
+            alert("Guardado exitosamente");
+        }
 
-        window.saveRealResult = function(matchId) {
-            const valL = document.getElementById(`real-l-${matchId}`).value;
-            const valV = document.getElementById(`real-v-${matchId}`).value;
-            let res = JSON.parse(localStorage.getItem('resultados_reales'));
-            if (valL === '' || valV === '') delete res[matchId];
-            else res[matchId] = { l: parseInt(valL), v: parseInt(valV) };
-            localStorage.setItem('resultados_reales', JSON.stringify(res));
-            renderGroupStandings(); // Actualizar grupos en tiempo real
-        };
-
-        // CALCULO DE RANKING (SOLO USUARIOS REALES LOCALES)
         function computePoints(pred, real) {
-            if (!pred || !real || pred.l === undefined || real.l === undefined) return 0;
-            if (pred.l === real.l && pred.v === real.v) return 3;
-            if (Math.sign(pred.l - pred.v) === Math.sign(real.l - real.v)) return 1;
+            if(!pred || !real) return 0;
+            if(pred.l === real.l && pred.v === real.v) return 3;
+            if(Math.sign(pred.l - pred.v) === Math.sign(real.l - real.v)) return 1;
             return 0;
         }
 
         function calculateLeaderboard() {
-            const resReales = JSON.parse(localStorage.getItem('resultados_reales'));
-            const usersList = JSON.parse(localStorage.getItem('quiniela_users_list')) || [];
-            let ranking = [];
-
-            usersList.forEach(user => {
-                let pts = 0; let jug = 0;
-                let preds = JSON.parse(localStorage.getItem(`pred_${user}`)) || {};
-                
-                PARTIDOS_INICIALES.forEach(m => {
-                    if (resReales[m.id] && preds[m.id]) { 
-                        pts += computePoints(preds[m.id], resReales[m.id]); 
-                        jug++; 
-                    }
+            const users = JSON.parse(localStorage.getItem('quiniela_users_list')) || [];
+            let rank = users.map(u => {
+                let p = 0, j = 0, preds = JSON.parse(localStorage.getItem(`pred_${u}`)) || {};
+                partidosOficiales.forEach(m => {
+                    if(resultadosReales[m.id] && preds[m.id]) { p += computePoints(preds[m.id], resultadosReales[m.id]); j++; }
                 });
-                ranking.push({ nombre: user, puntos: pts, jugados: jug, isCurrent: (user === currentUser) });
-            });
+                return { name: u, pts: p, jug: j };
+            }).sort((a,b) => b.pts - a.pts);
 
-            ranking.sort((a, b) => b.puntos - a.puntos);
-
-            const tbody = document.getElementById('leaderboard-tbody'); tbody.innerHTML = '';
-            ranking.forEach((p, i) => {
-                const tr = document.createElement('tr');
-                if(p.isCurrent) tr.style.backgroundColor = 'rgba(251, 192, 45, 0.15)';
-                tr.innerHTML = `
-                    <td><span class="rank-badge ${i < 3 ? 'rank-'+(i+1) : ''}">${i + 1}</span></td>
-                    <td style="font-weight:${p.isCurrent ? 'bold':'normal'};">${p.nombre} ${p.isCurrent ? '(Tú)' : ''}</td>
-                    <td class="center">${p.jugados}</td>
-                    <td class="center" style="font-weight:bold; color:var(--primary);">${p.puntos} pts</td>`;
-                tbody.appendChild(tr);
-            });
+            document.getElementById('leaderboard-tbody').innerHTML = rank.map((u, i) => `
+                <tr style="${u.name === currentUser ? 'background: rgba(251, 192, 45, 0.15)' : ''}">
+                    <td>${i+1}</td><td style="font-weight:${u.name === currentUser ? 'bold':'normal'};">${u.name}</td>
+                    <td style="text-align:center;">${u.jug}</td><td style="text-align:right; font-weight:bold; color:var(--primary);">${u.pts} pts</td>
+                </tr>
+            `).join('');
         }
 
-        // GENERACIÓN DE PDF (CON USUARIOS REALES)
+        // PDF Generation
         window.descargarPDF = function() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
+            const { jsPDF } = window.jspdf; const doc = new jsPDF('p', 'mm', 'a4');
+            doc.setFontSize(18); doc.text("Quiniela Mundial 2026 - Halcones", 14, 20);
             
-            doc.setFontSize(18); doc.setTextColor(27, 94, 32);
-            doc.text("Quiniela Mundial 2026 - Halcones", 14, 20);
-            doc.setFontSize(12); doc.setTextColor(100, 100, 100);
-            doc.text(`Reporte generado el: ${new Date().toLocaleDateString()}`, 14, 28);
+            const users = JSON.parse(localStorage.getItem('quiniela_users_list')) || [];
+            let data = users.map(u => {
+                let p = 0, j = 0, preds = JSON.parse(localStorage.getItem(`pred_${u}`)) || {};
+                partidosOficiales.forEach(m => { if(resultadosReales[m.id] && preds[m.id]) { p += computePoints(preds[m.id], resultadosReales[m.id]); j++; }});
+                return [u, j, p];
+            }).sort((a,b) => b[2] - a[2]);
 
-            const resReales = JSON.parse(localStorage.getItem('resultados_reales'));
-            const usersList = JSON.parse(localStorage.getItem('quiniela_users_list')) || [];
-            
-            let rankingData = [];
-            usersList.forEach(user => {
-                let pts = 0; let jug = 0;
-                let preds = JSON.parse(localStorage.getItem(`pred_${user}`)) || {};
-                PARTIDOS_INICIALES.forEach(m => {
-                    if (resReales[m.id] && preds[m.id]) { pts += computePoints(preds[m.id], resReales[m.id]); jug++; }
-                });
-                rankingData.push([user, jug, pts]);
-            });
-            rankingData.sort((a, b) => b[2] - a[2]);
-
-            doc.autoTable({ startY: 35, head: [['Participante', 'Partidos Jugados', 'Puntos']], body: rankingData, theme: 'grid', headStyles: { fillColor: [27, 94, 32] } });
-
-            let finalY = doc.lastAutoTable.finalY + 15;
-            doc.setFontSize(14); doc.setTextColor(27, 94, 32);
-            doc.text("Detalle de Pronósticos", 14, finalY);
-
-            let predsData = [];
-            PARTIDOS_INICIALES.forEach(match => {
-                let row = [`G${match.grupo}: ${match.local} vs ${match.visitante}`];
-                usersList.forEach(user => {
-                    let preds = JSON.parse(localStorage.getItem(`pred_${user}`)) || {};
-                    const p = preds[match.id];
-                    row.push(p ? `${p.l} - ${p.v}` : '-');
-                });
-                predsData.push(row);
-            });
-
-            let headRow = ['Partido', ...usersList];
-            doc.autoTable({ startY: finalY + 5, head: [headRow], body: predsData, theme: 'striped', styles: { fontSize: 8 }, headStyles: { fillColor: [251, 192, 45], textColor: [0,0,0] } });
-
-            doc.save("Reporte_Quiniela_Halcones.pdf");
-        };
+            doc.autoTable({ startY: 30, head: [['Participante', 'Jugados', 'Puntos']], body: data, headStyles: { fillColor: [27, 94, 32] } });
+            doc.save("Reporte_Halcones.pdf");
+        }
 
         init();
     </script>
