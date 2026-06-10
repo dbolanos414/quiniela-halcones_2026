@@ -22,13 +22,13 @@
         /* VISTA DE ACCESO */
         #login-view {
             display: flex; justify-content: center; align-items: center; min-height: 100vh;
-            /* Fused the Quiniela_02.png with the original gradient for readability */
-            background-image: linear-gradient(135deg, rgba(27, 94, 32, 0.9), rgba(33, 33, 33, 0.95)), url('uploaded:Quiniela_02.png-aca49405-4d92-4e12-91d9-1c374292fcd9');
+            /* Se usa la ruta relativa del archivo en la misma carpeta */
+            background-image: linear-gradient(135deg, rgba(27, 94, 32, 0.9), rgba(33, 33, 33, 0.95)), url('Quiniela_02.png');
             background-size: cover; background-position: center; background-repeat: no-repeat;
             padding: 20px;
         }
         .login-card { background: var(--white); padding: 40px 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 100%; max-width: 420px; text-align: center; border-top: 6px solid var(--secondary); }
-        .scout-badge-custom { width: 80px; height: 80px; border-radius: 50%; display: block; margin: 0 auto 20px auto; object-fit: cover; }
+        .scout-badge-custom { width: 80px; height: 80px; border-radius: 50%; display: block; margin: 0 auto 20px auto; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .login-card h1 { font-size: 2rem; color: var(--primary); margin-bottom: 5px; font-weight: 800; }
         .login-card h2 { font-size: 1.1rem; color: var(--grey-dark); margin-bottom: 25px; font-weight: 400; }
         .form-group { text-align: left; margin-bottom: 20px; }
@@ -40,7 +40,7 @@
         #app-view { min-height: 100vh; display: flex; flex-direction: column; }
         navbar { background: var(--primary); color: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .nav-brand-container { display: flex; align-items: center; gap: 10px; }
-        .nav-brand-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .nav-brand-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--secondary); }
         .nav-brand-text { font-weight: 800; font-size: 1.2rem; color: var(--white); }
         .user-tag { background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border-left: 3px solid var(--secondary); margin-right: 10px;}
         .btn-logout { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.4); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
@@ -51,15 +51,13 @@
         .tab-btn.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 3px; background: var(--secondary); }
 
         main {
-            width: 100%; margin: 30px auto; padding: 0 20px; flex: 1;
-            /* base properties for dynamic background */
-            background-size: cover; background-position: center; background-repeat: no-repeat;
-            /* adds dynamic background based on active tab via JS */
+            width: 100%; margin: 0; padding: 30px 20px; flex: 1;
+            background-size: cover; background-position: center; background-attachment: fixed; background-repeat: no-repeat;
         }
         .content-wrapper {
             max-width: 900px; margin: 0 auto;
-            background-color: var(--white); padding: 30px; border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background-color: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .section-header { margin-bottom: 20px; color: var(--primary); font-size: 1.5rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center;}
@@ -97,8 +95,8 @@
 
     <div id="login-view">
         <div class="login-card">
-            <!-- logo replacement -->
-            <img src="uploaded:Logo.jpg-529328be-3258-49b3-a47f-56d32211f271" class="scout-badge-custom">
+            <!-- Rutas relativas a los archivos en la misma carpeta -->
+            <img src="Logo.jpg" class="scout-badge-custom" alt="Logo Halcones">
             <h1>LA LAGUNA 2026</h1>
             <h2>Quiniela • Halcones (En Vivo)</h2>
             <form id="login-form">
@@ -119,8 +117,7 @@
     <div id="app-view" class="hidden">
         <navbar>
             <div class="nav-brand-container">
-                <!-- navbar logo replacement -->
-                <img src="uploaded:Logo.jpg-529328be-3258-49b3-a47f-56d32211f271" class="nav-brand-img">
+                <img src="Logo.jpg" class="nav-brand-img" alt="Logo Halcones">
                 <span class="nav-brand-text">Halcones</span>
             </div>
             <div>
@@ -136,13 +133,12 @@
             <button class="tab-btn" data-target="clasificacion-section">🏆 Tabla General</button>
         </div>
 
-        <main>
-            <div id="api-status" style="background: rgba(227, 242, 253, 0.9); color: #1565c0; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; text-align: center; font-weight:bold;">
-                Sincronizando con los servidores de la FIFA...
-            </div>
-
-            <!-- Wrapper for main content visibility -->
+        <main id="main-background">
             <div class="content-wrapper">
+                <div id="api-status" style="background: rgba(227, 242, 253, 0.9); color: #1565c0; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; text-align: center; font-weight:bold;">
+                    Sincronizando con los servidores de la FIFA...
+                </div>
+
                 <!-- PRONÓSTICOS -->
                 <section id="partidos-section" class="view-section">
                     <div class="section-header"><span>Tus Predicciones</span></div>
@@ -180,17 +176,17 @@
 
     <script>
         // =========================================================
-        // CONFIGURACIÓN DE LA API Y DATOS DEL EXCEL
+        // CONFIGURACIÓN DE LA API Y RUTAS DE IMÁGENES
         // =========================================================
-        const API_KEY = "02d52ad09dacaaa599c59c1690d5ee4b"; // <-- Clave integrada correctamente
+        const API_KEY = "02d52ad09dacaaa599c59c1690d5ee4b";
         const API_HOST = "v3.football.api-sports.io";
         const LEAGUE_ID = 1; 
         const SEASON = 2026; 
         const SECRET_CODE = "MUNDIAL26-HALCONES";
 
-        // Backgrounds for dynamic tabs
-        const quiniela_01_url = "url('uploaded:Quiniela_01.png-73e60975-d366-487b-8e31-77c1f881c253')";
-        const quiniela_02_url = "url('uploaded:Quiniela_02.png-aca49405-4d92-4e12-91d9-1c374292fcd9')";
+        // Rutas relativas de las imágenes para los fondos
+        const quiniela_01_url = "url('Quiniela_01.png')";
+        const quiniela_02_url = "url('Quiniela_02.png')";
 
         // Map tab targets to backgrounds
         const tabBackgrounds = {
@@ -200,7 +196,6 @@
             "clasificacion-section": quiniela_02_url
         };
 
-        // Estructura completa extraída del Excel proporcionado (Grupos A - L)
         const PARTIDOS_INICIALES = [
             { id: 1, grupo: "A", local: "Mexico", flagLocal: "🇲🇽", visitante: "South Africa", flagVisitante: "🇿🇦", sede: "Mexico City", fecha: "11 Jun" },
             { id: 2, grupo: "A", local: "Rep. of Korea", flagLocal: "🇰🇷", visitante: "Czech Rep.", flagVisitante: "🇨🇿", sede: "Guadalajara", fecha: "11 Jun" },
@@ -224,14 +219,12 @@
         let partidosOficiales = [];
         let resultadosReales = {}; 
 
-        // INICIALIZACIÓN
         function init() {
             if(!localStorage.getItem('quiniela_users_list')) localStorage.setItem('quiniela_users_list', JSON.stringify([]));
             if (currentUser) {
                 showDashboard();
             }
             
-            // Navegación de pestañas
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const targetId = this.dataset.target;
@@ -242,13 +235,12 @@
                     this.classList.add('active');
                     document.getElementById(targetId).classList.remove('hidden');
                     
-                    // Actualizar fondo dinámico
-                    document.querySelector('main').style.backgroundImage = tabBackgrounds[targetId];
+                    // Actualizar fondo
+                    document.getElementById('main-background').style.backgroundImage = tabBackgrounds[targetId];
                 });
             });
         }
 
-        // LOGIN
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const user = document.getElementById('username').value.trim();
@@ -278,15 +270,10 @@
             document.getElementById('app-view').classList.remove('hidden');
             document.getElementById('user-display-name').textContent = currentUser;
             
-            // Cargar fondo predeterminado (Mis Pronósticos)
-            document.querySelector('main').style.backgroundImage = tabBackgrounds["partidos-section"];
-            
+            document.getElementById('main-background').style.backgroundImage = tabBackgrounds["partidos-section"];
             fetchDataFromAPI();
         }
 
-        // =========================================================
-        // MOTOR DE CONEXIÓN CON LA API DE DEPORTES
-        // =========================================================
         async function fetchDataFromAPI() {
             const statusDiv = document.getElementById('api-status');
             
@@ -350,9 +337,6 @@
             calculateLeaderboard();
         }
 
-        // =========================================================
-        // RENDERIZADO DE VISTAS CON LOS DATOS DE LA API/EXCEL
-        // =========================================================
         function renderMatchesUI() {
             const container = document.getElementById('matches-list-container');
             container.innerHTML = '';
