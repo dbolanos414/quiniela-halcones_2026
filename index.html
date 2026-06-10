@@ -22,7 +22,6 @@
         /* VISTA DE ACCESO */
         #login-view {
             display: flex; justify-content: center; align-items: center; min-height: 100vh;
-            /* Se usa la ruta relativa del archivo en la misma carpeta */
             background-image: linear-gradient(135deg, rgba(27, 94, 32, 0.9), rgba(33, 33, 33, 0.95)), url('Quiniela_02.png');
             background-size: cover; background-position: center; background-repeat: no-repeat;
             padding: 20px;
@@ -38,12 +37,17 @@
         
         /* DASHBOARD Y NAVEGACIÓN */
         #app-view { min-height: 100vh; display: flex; flex-direction: column; }
-        navbar { background: var(--primary); color: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        navbar { background: var(--primary); color: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 10px;}
         .nav-brand-container { display: flex; align-items: center; gap: 10px; }
         .nav-brand-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--secondary); }
         .nav-brand-text { font-weight: 800; font-size: 1.2rem; color: var(--white); }
-        .user-tag { background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border-left: 3px solid var(--secondary); margin-right: 10px;}
-        .btn-logout { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.4); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+        
+        .nav-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .user-tag { background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border-left: 3px solid var(--secondary); }
+        .btn-header { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.4); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: 0.2s;}
+        .btn-header:hover { background: rgba(255,255,255,0.1); }
+        .btn-admin { background: var(--secondary); color: var(--dark); border: none; font-weight: bold; }
+        .btn-admin:hover { background: var(--secondary-dark); }
         
         .tabs-container { background: var(--white); display: flex; justify-content: center; border-bottom: 2px solid var(--grey-light); flex-wrap: wrap; }
         .tab-btn { padding: 12px 15px; background: none; border: none; font-size: 0.95rem; font-weight: 600; color: var(--grey-dark); cursor: pointer; position: relative; }
@@ -55,12 +59,12 @@
             background-size: cover; background-position: center; background-attachment: fixed; background-repeat: no-repeat;
         }
         .content-wrapper {
-            max-width: 900px; margin: 0 auto;
+            max-width: 1000px; margin: 0 auto;
             background-color: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        .section-header { margin-bottom: 20px; color: var(--primary); font-size: 1.5rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center;}
+        .section-header { margin-bottom: 20px; color: var(--primary); font-size: 1.5rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;}
         
         /* TARJETAS DE PARTIDO */
         .match-card { background: var(--white); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 5px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
@@ -70,7 +74,7 @@
         .team-logo-custom { font-size: 2rem; margin-bottom: 5px; display: inline-block; }
         .api-logo-custom { width: 40px; height: 40px; object-fit: contain; margin-bottom: 5px; }
         
-        .prediction-box { display: flex; gap: 10px; background: var(--light); padding: 10px; border-radius: 12px; align-items: center;}
+        .prediction-box { display: flex; gap: 10px; background: var(--light); padding: 10px; border-radius: 12px; align-items: center; justify-content: center; flex-wrap: wrap;}
         .input-score { width: 45px; height: 45px; text-align: center; font-size: 1.2rem; font-weight: bold; border: 2px solid var(--grey-light); border-radius: 6px; }
         .score-display-custom { font-size: 1.5rem; font-weight: 900; color: var(--primary); }
         .real-score-badge-custom { background: #e8f5e9; padding: 5px 15px; border-radius: 20px; color: var(--primary); font-weight: 800; border: 1px solid #c8e6c9;}
@@ -79,23 +83,30 @@
         .loader-custom { text-align: center; padding: 40px; color: var(--grey-dark); font-weight: bold; }
         .table-responsive-custom { overflow-x: auto; background: var(--white); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 30px;}
         .data-table-custom { width: 100%; border-collapse: collapse; min-width: 600px; }
-        .data-table-custom th { background: var(--primary); color: var(--white); text-align: left; padding: 12px; }
-        .data-table-custom td { padding: 12px; border-bottom: 1px solid var(--grey-light); }
+        .data-table-custom th { background: var(--primary); color: var(--white); text-align: left; padding: 12px; font-size: 0.9rem;}
+        .data-table-custom td { padding: 12px; border-bottom: 1px solid var(--grey-light); font-size: 0.95rem;}
         .group-title-custom { background: var(--secondary); padding: 8px 15px; font-weight: bold; border-radius: 8px 8px 0 0; margin-top: 20px; color: var(--dark);}
         
-        .btn-action-custom { background: var(--secondary); border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; color: var(--dark); }
+        .btn-action-custom { background: var(--secondary); border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; color: var(--dark); transition: 0.2s; }
+        .btn-action-custom:hover { background: var(--secondary-dark); }
         
         .rank-badge-custom { display: inline-block; width: 28px; height: 28px; text-align: center; line-height: 28px; border-radius: 50%; font-weight: 700; background: var(--light); }
         .rank-1-custom .rank-badge-custom { background: #ffd700; color: #5d4037; }
         .rank-2-custom .rank-badge-custom { background: #c0c0c0; color: #455a64; }
         .rank-3-custom .rank-badge-custom { background: #cd7f32; color: #fff; }
+
+        /* MODAL ADMIN */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; justify-content: center; align-items: center; }
+        .modal-content { background: var(--white); padding: 30px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
+        .admin-user-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--grey-light); }
+        .btn-delete { background: var(--error); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+        .btn-delete:hover { background: #d32f2f; }
     </style>
 </head>
 <body>
 
     <div id="login-view">
         <div class="login-card">
-            <!-- Rutas relativas a los archivos en la misma carpeta -->
             <img src="Logo.jpg" class="scout-badge-custom" alt="Logo Halcones">
             <h1>LA LAGUNA 2026</h1>
             <h2>Quiniela • Halcones (En Vivo)</h2>
@@ -120,9 +131,10 @@
                 <img src="Logo.jpg" class="nav-brand-img" alt="Logo Halcones">
                 <span class="nav-brand-text">Halcones</span>
             </div>
-            <div>
+            <div class="nav-actions">
                 <span class="user-tag" id="user-display-name"></span>
-                <button class="btn-logout" id="btn-logout">Salir</button>
+                <button class="btn-header btn-admin" id="btn-admin-login">⚙️ Admin</button>
+                <button class="btn-header" id="btn-logout">Salir</button>
             </div>
         </navbar>
 
@@ -131,6 +143,7 @@
             <button class="tab-btn" data-target="calendario-section">📅 Calendario Oficial</button>
             <button class="tab-btn" data-target="grupos-section">📊 Fase de Grupos</button>
             <button class="tab-btn" data-target="clasificacion-section">🏆 Tabla General</button>
+            <button class="tab-btn" data-target="resumen-section">📋 Resumen Pronósticos</button>
         </div>
 
         <main id="main-background">
@@ -170,8 +183,38 @@
                         </table>
                     </div>
                 </section>
+
+                <!-- RESUMEN DE PRONÓSTICOS (NUEVO) -->
+                <section id="resumen-section" class="view-section hidden">
+                    <div class="section-header">
+                        <span>Resumen de Todos los Pronósticos</span>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--grey-dark); margin-bottom: 15px;">Aquí puedes ver qué marcador pronosticó cada participante para los partidos del Mundial.</p>
+                    <div class="table-responsive-custom">
+                        <table class="data-table-custom" id="resumen-table">
+                            <!-- Se llena con JS -->
+                        </table>
+                    </div>
+                </section>
             </div>
         </main>
+    </div>
+
+    <!-- MODAL ADMINISTRADOR -->
+    <div id="admin-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 style="color: var(--primary); margin-bottom: 5px;">Panel de Administración</h2>
+            <p style="font-size: 0.85rem; color: var(--grey-dark); margin-bottom: 20px;">Gestión de participantes de la Liga Halcones.</p>
+            
+            <h3 style="font-size: 1rem; border-bottom: 2px solid var(--grey-light); padding-bottom: 5px; margin-bottom: 10px;">Usuarios Registrados</h3>
+            <div id="admin-users-list">
+                <!-- Se llena con JS -->
+            </div>
+            
+            <div style="margin-top: 25px; text-align: right;">
+                <button class="btn-action-custom" style="background: var(--grey-light); color: var(--dark);" onclick="document.getElementById('admin-modal').classList.add('hidden')">Cerrar Panel</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -183,6 +226,7 @@
         const LEAGUE_ID = 1; 
         const SEASON = 2026; 
         const SECRET_CODE = "MUNDIAL26-HALCONES";
+        const ADMIN_PASS = "m0rf0s3s";
 
         // Rutas relativas de las imágenes para los fondos
         const quiniela_01_url = "url('Quiniela_01.png')";
@@ -193,7 +237,8 @@
             "partidos-section": quiniela_01_url,
             "calendario-section": quiniela_02_url,
             "grupos-section": quiniela_01_url,
-            "clasificacion-section": quiniela_02_url
+            "clasificacion-section": quiniela_02_url,
+            "resumen-section": quiniela_01_url
         };
 
         const PARTIDOS_INICIALES = [
@@ -241,6 +286,7 @@
             });
         }
 
+        // LOGIN NORMAL
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const user = document.getElementById('username').value.trim();
@@ -264,6 +310,51 @@
             localStorage.removeItem('quiniela_current_user'); currentUser = null;
             location.reload();
         });
+
+        // ACCESO ADMINISTRADOR (MODAL)
+        document.getElementById('btn-admin-login').addEventListener('click', () => {
+            const pwd = prompt("Ingresa la clave de administrador:");
+            if (pwd === ADMIN_PASS) {
+                document.getElementById('admin-modal').classList.remove('hidden');
+                renderAdminUsers();
+            } else if (pwd !== null) {
+                alert("Clave incorrecta. Acceso denegado.");
+            }
+        });
+
+        function renderAdminUsers() {
+            const users = JSON.parse(localStorage.getItem('quiniela_users_list')) || [];
+            const container = document.getElementById('admin-users-list');
+            if(users.length === 0) {
+                container.innerHTML = "<p style='color:#777; font-size:0.9rem;'>No hay usuarios registrados aún.</p>";
+                return;
+            }
+            
+            container.innerHTML = users.map(u => `
+                <div class="admin-user-row">
+                    <span style="font-weight:600;">${u}</span>
+                    <button class="btn-delete" onclick="deleteUser('${u}')">Dar de baja</button>
+                </div>
+            `).join('');
+        }
+
+        window.deleteUser = function(user) {
+            if(confirm(`¿Estás completamente seguro de que deseas eliminar al usuario "${user}"? Se borrarán todos sus pronósticos de forma permanente.`)) {
+                let users = JSON.parse(localStorage.getItem('quiniela_users_list')) || [];
+                users = users.filter(u => u !== user);
+                localStorage.setItem('quiniela_users_list', JSON.stringify(users));
+                localStorage.removeItem(`pred_${user}`); // Borra sus predicciones
+                
+                if(currentUser === user) {
+                    // Si el admin se borra a sí mismo
+                    document.getElementById('btn-logout').click();
+                } else {
+                    renderAdminUsers();
+                    calculateLeaderboard();
+                    renderResumenTabla();
+                }
+            }
+        }
 
         function showDashboard() {
             document.getElementById('login-view').classList.add('hidden'); 
@@ -335,6 +426,7 @@
             renderCalendarioUI();
             renderGruposUI();
             calculateLeaderboard();
+            renderResumenTabla();
         }
 
         function renderMatchesUI() {
@@ -428,6 +520,7 @@
             preds[id] = {l: parseInt(l), v: parseInt(v)};
             localStorage.setItem(`pred_${currentUser}`, JSON.stringify(preds));
             alert("Guardado exitosamente");
+            renderResumenTabla(); // Refresh summary matrix
         }
 
         function computePoints(pred, real) {
@@ -453,6 +546,48 @@
                     <td style="text-align:center;">${u.jug}</td><td style="text-align:right; font-weight:bold; color:var(--primary);">${u.pts} pts</td>
                 </tr>
             `).join('');
+        }
+
+        // RENDERIZAR TABLA DE RESUMEN DE PRONÓSTICOS
+        function renderResumenTabla() {
+            const users = JSON.parse(localStorage.getItem('quiniela_users_list')) || [];
+            const container = document.getElementById('resumen-table');
+            
+            if(users.length === 0 || partidosOficiales.length === 0) {
+                container.innerHTML = "<tr><td>No hay datos suficientes para mostrar el resumen.</td></tr>";
+                return;
+            }
+
+            // Crear encabezados (Los partidos)
+            let thead = `<tr>
+                <th style="min-width: 120px; position: sticky; left: 0; background: var(--primary); z-index: 2;">Participante</th>`;
+            partidosOficiales.forEach(m => {
+                const homeShort = m.local.substring(0,3).toUpperCase();
+                const awayShort = m.visitante.substring(0,3).toUpperCase();
+                thead += `<th style="text-align:center; font-size:0.75rem; min-width:80px; line-height:1.2;">
+                    G${m.grupo}<br>${homeShort} v ${awayShort}
+                </th>`;
+            });
+            thead += `</tr>`;
+
+            // Crear filas (Los usuarios y sus pronósticos)
+            let tbody = users.map(u => {
+                let preds = JSON.parse(localStorage.getItem(`pred_${u}`)) || {};
+                let userStyle = (u === currentUser) ? 'background: rgba(251, 192, 45, 0.15); font-weight:bold;' : 'background: white;';
+                
+                let tds = partidosOficiales.map(m => {
+                    let p = preds[m.id];
+                    let cellText = p ? `${p.l} - ${p.v}` : `<span style="color:#ccc;">-</span>`;
+                    return `<td style="text-align:center; font-weight:600;">${cellText}</td>`;
+                }).join('');
+                
+                return `<tr>
+                    <td style="${userStyle} position: sticky; left: 0; z-index: 1; border-right: 2px solid var(--grey-light);">${u}</td>
+                    ${tds}
+                </tr>`;
+            }).join('');
+
+            container.innerHTML = `<thead>${thead}</thead><tbody>${tbody}</tbody>`;
         }
 
         // PDF Generation
