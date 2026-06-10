@@ -3,189 +3,560 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso | Quiniela Mundial 2026</title>
+    <title>Quiniela Mundial 2026 | Grupo III La Laguna</title>
+    <!-- Bibliotecas para generar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
-            --primary-color: #1b5e20; /* Verde oscuro */
-            --secondary-color: #fbc02d; /* Amarillo */
-            --bg-color: #f4f7f6;
-            --text-color: #333333;
-            --card-bg: #ffffff;
+            --primary: #1b5e20;      
+            --primary-light: #2e7d32;
+            --secondary: #fbc02d;    
+            --secondary-dark: #f57f17;
+            --dark: #212121;
+            --light: #f4f6f5;
+            --white: #ffffff;
+            --grey-light: #e0e0e0;
+            --grey-dark: #757575;
+            --success: #4caf50;
+            --error: #f44336;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .hidden { display: none !important; }
+
+        /* --- VISTA DE ACCESO (LOGIN) --- */
+        #login-view {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-image: linear-gradient(135deg, rgba(27, 94, 32, 0.1) 0%, rgba(251, 192, 45, 0.1) 100%);
+            min-height: 100vh;
+            background: linear-gradient(135deg, rgba(27, 94, 32, 0.9) 0%, rgba(33, 33, 33, 0.95) 100%);
+            padding: 20px;
         }
 
         .login-card {
-            background-color: var(--card-bg);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            background: var(--white);
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             text-align: center;
-            border-top: 5px solid var(--primary-color);
+            border-top: 6px solid var(--secondary);
         }
 
-        .logo {
-            font-size: 48px;
-            margin-bottom: 10px;
-            letter-spacing: 10px;
+        .scout-badge {
+            width: 80px; height: 80px; background: var(--primary); color: var(--secondary);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-size: 40px; margin: 0 auto 20px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        .league-title {
-            color: var(--primary-color);
-            font-size: 1.4rem;
-            margin-bottom: 5px;
-        }
+        .login-card h1 { font-size: 2rem; color: var(--primary); margin-bottom: 5px; font-weight: 800; }
+        .login-card h2 { font-size: 1.1rem; color: var(--grey-dark); margin-bottom: 25px; font-weight: 400; }
 
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-        }
+        .form-group { text-align: left; margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; color: var(--dark); }
+        .form-group input { width: 100%; padding: 12px 16px; border: 2px solid var(--grey-light); border-radius: 8px; font-size: 1rem; }
+        .form-group input:focus { outline: none; border-color: var(--primary); }
 
-        p {
-            color: #666;
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-            line-height: 1.5;
+        .btn-block {
+            width: 100%; padding: 14px; background: var(--primary); color: var(--white);
+            border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer;
         }
+        .btn-block:hover { background: var(--primary-light); }
+        .error-alert { background: #ffebee; color: var(--error); padding: 10px; border-radius: 6px; font-size: 0.85rem; margin-top: 15px; display: none; font-weight: 600; }
 
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
+        /* --- VISTA PRINCIPAL (DASHBOARD) --- */
+        #app-view { min-height: 100vh; display: flex; flex-direction: column; }
 
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
+        navbar {
+            background: var(--primary); color: var(--white); padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;
         }
+        .nav-brand { font-weight: 800; font-size: 1.2rem; }
+        .nav-user { display: flex; align-items: center; gap: 15px; }
+        .user-tag { background: rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; border-left: 3px solid var(--secondary); }
+        .btn-logout { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.4); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
 
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
+        .tabs-container {
+            background: var(--white); display: flex; justify-content: center; border-bottom: 2px solid var(--grey-light); flex-wrap: wrap;
         }
+        .tab-btn {
+            padding: 15px 20px; background: none; border: none; font-size: 0.95rem; font-weight: 600; color: var(--grey-dark); cursor: pointer; position: relative;
+        }
+        .tab-btn:hover, .tab-btn.active { color: var(--primary); }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 3px; background: var(--secondary); }
 
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(27, 94, 32, 0.2);
-        }
+        main { max-width: 800px; width: 100%; margin: 30px auto; padding: 0 20px; flex: 1; }
+        .view-section { animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .btn-submit {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 14px;
-            width: 100%;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
+        .section-header {
+            margin-bottom: 20px; color: var(--primary); font-size: 1.5rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
         }
-
-        .btn-submit:hover {
-            background-color: #144d18;
-        }
-
-        .btn-submit:active {
-            transform: scale(0.98);
-        }
-
-        .error-message {
-            color: #d32f2f;
-            font-size: 0.85rem;
-            margin-top: 10px;
-            display: none;
-        }
+        .admin-toggle { font-size: 0.8rem; background: var(--grey-light); padding: 6px 12px; border-radius: 12px; cursor: pointer; user-select: none; }
         
-        .footer-text {
-            margin-top: 25px;
-            font-size: 0.8rem;
-            color: #999;
+        .btn-pdf { background: var(--secondary); color: var(--dark); border: none; padding: 8px 15px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
+        .btn-pdf:hover { background: var(--secondary-dark); }
+
+        /* Tarjetas de Partidos */
+        .match-card {
+            background: var(--white); border-radius: 12px; padding: 20px; margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04); border-left: 5px solid var(--primary);
         }
+        .match-meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--grey-dark); margin-bottom: 15px; border-bottom: 1px dashed var(--grey-light); padding-bottom: 8px; font-weight: 600; }
+        .match-body { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .team-box { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .team-flag { font-size: 2rem; margin-bottom: 5px; }
+        .team-name { font-weight: 700; font-size: 1.05rem; }
+        
+        .prediction-box, .real-score-box { display: flex; align-items: center; gap: 12px; background: var(--light); padding: 10px 15px; border-radius: 12px; }
+        .real-score-box { background: #e8f5e9; border: 1px solid #c8e6c9; }
+        
+        .input-score { width: 55px; height: 55px; text-align: center; font-size: 1.6rem; font-weight: 800; border: 2px solid var(--grey-light); border-radius: 8px; }
+        .input-score:focus { outline: none; border-color: var(--secondary); }
+        .score-display { font-size: 1.8rem; font-weight: 800; color: var(--primary); width: 40px; text-align: center;}
+        
+        .vs-text { font-weight: 800; color: var(--grey-dark); font-size: 0.9rem; }
+        .match-footer { margin-top: 15px; display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
+        .save-status { font-size: 0.85rem; font-weight: 600; color: var(--success); opacity: 0; transition: opacity 0.3s; }
+        .btn-save { background: var(--secondary); border: none; padding: 8px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+
+        .admin-panel { background: #fff3e0; border: 1px solid #ffe0b2; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 0.9rem; }
+        
+        /* Calendario Real */
+        .calendario-list { display: flex; flex-direction: column; gap: 15px; }
+        .cal-item { background: var(--white); padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--secondary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .cal-teams { font-weight: 700; font-size: 1.1rem; }
+        .cal-score { font-weight: 800; color: var(--primary); font-size: 1.2rem; background: var(--light); padding: 5px 15px; border-radius: 20px; }
+        .cal-pending { color: var(--grey-dark); font-size: 0.9rem; font-weight: normal; font-style: italic; }
+
+        /* Clasificación */
+        .leaderboard-table { width: 100%; background: var(--white); border-radius: 12px; border-collapse: collapse; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
+        .leaderboard-table th { background: var(--primary); color: var(--white); text-align: left; padding: 15px; }
+        .leaderboard-table td { padding: 15px; border-bottom: 1px solid var(--grey-light); }
+        .leaderboard-row.current-user { background: rgba(251, 192, 45, 0.15); font-weight: 700; }
+        .rank-badge { display: inline-block; width: 28px; height: 28px; text-align: center; line-height: 28px; border-radius: 50%; font-weight: 700; background: var(--light); }
+        .rank-1 .rank-badge { background: #ffd700; color: #5d4037; }
+        .rank-2 .rank-badge { background: #c0c0c0; color: #455a64; }
+        .rank-3 .rank-badge { background: #cd7f32; color: #fff; }
     </style>
 </head>
 <body>
 
-    <div class="login-card">
-        <div class="logo">🦅⚜️</div>
-        <h2 class="league-title">Grupo III, La Laguna</h2>
-        <h1>Quiniela 2026</h1>
-        <p>Ingresa tus datos y el código de invitación proporcionado por el administrador para unirte a la liga.</p>
-
-        <form id="joinForm">
-            <div class="input-group">
-                <label for="nombre">Nombre de usuario</label>
-                <input type="text" id="nombre" placeholder="Ej. Juan Pérez" required>
-            </div>
-
-            <div class="input-group">
-                <label for="codigo">Código de Invitación</label>
-                <input type="text" id="codigo" placeholder="Ingresa el código secreto" required style="text-transform: uppercase;">
-            </div>
-
-            <button type="submit" class="btn-submit">Validar y Entrar</button>
-            <div class="error-message" id="errorMessage">Código de invitación incorrecto. Por favor, verifica con el administrador.</div>
-        </form>
-        
-        <div class="footer-text">
-            Plataforma de pronósticos privada &copy; 2026
+    <!-- LOGIN -->
+    <div id="login-view">
+        <div class="login-card">
+            <div class="scout-badge">🦅</div>
+            <h1>LA LAGUNA 2026</h1>
+            <h2>Quiniela del Mundial • Grupo III</h2>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Tu Nombre de Usuario</label>
+                    <input type="text" id="username" placeholder="Ej. Daniel / Toño" required>
+                </div>
+                <div class="form-group">
+                    <label>Código de Invitación</label>
+                    <input type="text" id="group-code" placeholder="MUNDIAL26" required style="text-transform: uppercase;">
+                </div>
+                <button type="submit" class="btn-block">Ingresar</button>
+                <div class="error-alert" id="login-error">Código incorrecto.</div>
+            </form>
         </div>
     </div>
 
+    <!-- DASHBOARD -->
+    <div id="app-view" class="hidden">
+        <navbar>
+            <div class="nav-brand">🦅 ⚜️ La Laguna</div>
+            <div class="nav-user">
+                <div class="user-tag" id="user-display-name">Usuario</div>
+                <button class="btn-logout" id="btn-logout">Salir</button>
+            </div>
+        </navbar>
+
+        <div class="tabs-container">
+            <button class="tab-btn active" data-target="partidos-section">⚽ Mis Pronósticos</button>
+            <button class="tab-btn" data-target="calendario-section">📅 Calendario Real</button>
+            <button class="tab-btn" data-target="clasificacion-section">🏆 Tabla General</button>
+            <button class="tab-btn" data-target="reglas-section">📋 Reglas</button>
+        </div>
+
+        <main>
+            <!-- SECCIÓN PRONÓSTICOS -->
+            <section id="partidos-section" class="view-section">
+                <div class="section-header">
+                    <span>Tus Predicciones</span>
+                    <span class="admin-toggle" id="toggle-admin-mode">⚙️ Modo Admin</span>
+                </div>
+                <div id="matches-list-container"></div>
+            </section>
+
+            <!-- SECCIÓN CALENDARIO REAL -->
+            <section id="calendario-section" class="view-section hidden">
+                <div class="section-header">
+                    <span>Fase de Grupos (Marcadores Oficiales)</span>
+                </div>
+                <div class="calendario-list" id="calendario-list-container"></div>
+            </section>
+
+            <!-- SECCIÓN CLASIFICACIÓN -->
+            <section id="clasificacion-section" class="view-section hidden">
+                <div class="section-header">
+                    <span>Clasificación General</span>
+                    <button class="btn-pdf" onclick="descargarPDF()">📥 Descargar PDF</button>
+                </div>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr><th>Pos</th><th>Participante</th><th style="text-align:center;">Jugados</th><th style="text-align:right;">Puntos</th></tr>
+                    </thead>
+                    <tbody id="leaderboard-tbody"></tbody>
+                </table>
+            </section>
+
+            <!-- SECCIÓN REGLAS -->
+            <section id="reglas-section" class="view-section hidden">
+                <div style="background: white; padding: 25px; border-radius: 12px;">
+                    <h3 style="color: var(--primary); margin-bottom: 15px;">Sistema de Puntuación</h3>
+                    <ul>
+                        <li style="margin-bottom: 10px;"><strong>+3 Puntos:</strong> Marcador Exacto.</li>
+                        <li style="margin-bottom: 10px;"><strong>+1 Punto:</strong> Acertar al ganador o empate (Tendencia).</li>
+                        <li><strong>0 Puntos:</strong> Resultado incorrecto.</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
     <script>
-        document.getElementById('joinForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Evita que la página se recargue
+        const SECRET_CODE = "MUNDIAL26";
 
-            const nombre = document.getElementById('nombre').value;
-            const codigo = document.getElementById('codigo').value.trim().toUpperCase();
-            const errorMessage = document.getElementById('errorMessage');
+        // CALENDARIO COMPLETO SIMULADO (Muestra representativa de la fase de grupos)
+        // Puedes agregar los 72 partidos siguiendo esta misma estructura
+        const PARTIDOS_INICIALES = [
+            { id: 1, grupo: "A", local: "México", flagLocal: "🇲🇽", visitante: "Polonia", flagVisitante: "🇵🇱", sede: "Azteca, CDMX", fecha: "11 Jun 2026" },
+            { id: 2, grupo: "A", local: "A3", flagLocal: "🏳️", visitante: "A4", flagVisitante: "🏳️", sede: "Guadalajara", fecha: "11 Jun 2026" },
+            { id: 3, grupo: "B", local: "Canadá", flagLocal: "🇨🇦", visitante: "Marruecos", flagVisitante: "🇲🇦", sede: "Toronto", fecha: "12 Jun 2026" },
+            { id: 4, grupo: "B", local: "B3", flagLocal: "🏳️", visitante: "B4", flagVisitante: "🏳️", sede: "Vancouver", fecha: "12 Jun 2026" },
+            { id: 5, grupo: "C", local: "EE.UU.", flagLocal: "🇺🇸", visitante: "Gales", flagVisitante: "🏴󠁧󠁢󠁷󠁬󠁳󠁿", sede: "Los Angeles", fecha: "12 Jun 2026" },
+            { id: 6, grupo: "C", local: "C3", flagLocal: "🏳️", visitante: "C4", flagVisitante: "🏳️", sede: "Seattle", fecha: "13 Jun 2026" },
+            { id: 7, grupo: "D", local: "Argentina", flagLocal: "🇦🇷", visitante: "D2", flagVisitante: "🏳️", sede: "Miami", fecha: "13 Jun 2026" },
+            { id: 8, grupo: "E", local: "España", flagLocal: "🇪🇸", visitante: "E2", flagVisitante: "🏳️", sede: "Nueva York", fecha: "14 Jun 2026" },
+            { id: 9, grupo: "F", local: "Francia", flagLocal: "🇫🇷", visitante: "F2", flagVisitante: "🏳️", sede: "Dallas", fecha: "14 Jun 2026" },
+            { id: 10, grupo: "G", local: "Brasil", flagLocal: "🇧🇷", visitante: "G2", flagVisitante: "🏳️", sede: "Houston", fecha: "15 Jun 2026" }
+        ];
 
-            // Aquí es donde en el futuro conectarás con tu base de datos (Ej: fetch('/api/validar-codigo'))
-            // Por ahora, simulamos que el código correcto es "MUNDIAL26"
-            const CODIGO_VALIDO = "MUNDIAL26-HALCONES";
+        const COMPETIDORES_MOCK = [
+            { nombre: "Toño", predicciones: { 1: {l:2, v:1}, 3: {l:1, v:1}, 5: {l:3, v:1} } },
+            { nombre: "Scouter Sergio", predicciones: { 1: {l:1, v:0}, 3: {l:0, v:2}, 5: {l:2, v:0} } }
+        ];
 
-            if (codigo === CODIGO_VALIDO) {
-                errorMessage.style.display = 'none';
-                // Cambiar el botón a estado de carga o éxito
-                const btn = document.querySelector('.btn-submit');
-                btn.style.backgroundColor = 'var(--secondary-color)';
-                btn.style.color = '#333';
-                btn.textContent = '¡Acceso Concedido!';
-                
-                // Redirigir al dashboard principal después de 1 segundo
-                setTimeout(() => {
-                    alert(`¡Bienvenido a la liga, ${nombre}! Aquí serías redirigido al panel de pronósticos.`);
-                    // window.location.href = '/dashboard';
-                }, 1000);
+        let currentUser = localStorage.getItem('quiniela_scout_user') || null;
+        let adminModeActive = false;
+
+        const loginView = document.getElementById('login-view');
+        const appView = document.getElementById('app-view');
+        const loginForm = document.getElementById('login-form');
+        const toggleAdminMode = document.getElementById('toggle-admin-mode');
+
+        function init() {
+            if (!localStorage.getItem('resultados_reales')) localStorage.setItem('resultados_reales', JSON.stringify({}));
+            if (currentUser) showDashboard();
+            setupTabs();
+        }
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value.trim();
+            const code = document.getElementById('group-code').value.trim().toUpperCase();
+
+            if (code === SECRET_CODE) {
+                document.getElementById('login-error').style.display = 'none';
+                currentUser = user;
+                localStorage.setItem('quiniela_scout_user', user);
+                showDashboard();
             } else {
-                // Mostrar error si el código no coincide
-                errorMessage.style.display = 'block';
-                document.getElementById('codigo').focus();
+                document.getElementById('login-error').style.display = 'block';
             }
         });
+
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            localStorage.removeItem('quiniela_scout_user'); currentUser = null;
+            appView.classList.add('hidden'); loginView.classList.remove('hidden'); loginForm.reset();
+        });
+
+        function showDashboard() {
+            loginView.classList.add('hidden'); appView.classList.remove('hidden');
+            document.getElementById('user-display-name').textContent = currentUser;
+            renderMatches(); renderCalendario(); calculateLeaderboard();
+        }
+
+        function setupTabs() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
+                    this.classList.add('active');
+                    document.getElementById(this.dataset.target).classList.remove('hidden');
+                    if (this.dataset.target === 'clasificacion-section') calculateLeaderboard();
+                    if (this.dataset.target === 'calendario-section') renderCalendario();
+                });
+            });
+        }
+
+        // CONTROL MODO ADMINISTRADOR RESTRINGIDO
+        toggleAdminMode.addEventListener('click', function() {
+            if (!adminModeActive) {
+                if (currentUser !== "Daniel") {
+                    alert("Acceso denegado. Solo el administrador 'Daniel' puede activar este modo.");
+                    return;
+                }
+                const pwd = prompt("Ingrese la clave de administrador:");
+                if (pwd === "m0rf0s3s") {
+                    adminModeActive = true;
+                    this.style.background = 'var(--secondary)';
+                    renderMatches();
+                } else {
+                    alert("Clave incorrecta.");
+                }
+            } else {
+                adminModeActive = false;
+                this.style.background = 'var(--grey-light)';
+                renderMatches();
+            }
+        });
+
+        function renderMatches() {
+            const container = document.getElementById('matches-list-container');
+            container.innerHTML = '';
+            const resultadosReales = JSON.parse(localStorage.getItem('resultados_reales')) || {};
+            const userPreds = JSON.parse(localStorage.getItem(`pred_${currentUser}`)) || {};
+
+            PARTIDOS_INICIALES.forEach(match => {
+                const matchPred = userPreds[match.id] || { l: '', v: '' };
+                const realScore = resultadosReales[match.id];
+                
+                const card = document.createElement('div'); card.className = 'match-card';
+                
+                let inputsHTML = '';
+                if (realScore && !adminModeActive) {
+                    // Si ya hay resultado real y no es admin, bloquea la edición
+                    inputsHTML = `
+                        <div class="real-score-box">
+                            <span class="score-display">${matchPred.l !== '' ? matchPred.l : '-'}</span>
+                            <span class="vs-text">TÚ</span>
+                            <span class="score-display">${matchPred.v !== '' ? matchPred.v : '-'}</span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--primary); text-align: center; margin-top: 5px;">
+                            Real: ${realScore.l} - ${realScore.v}
+                        </div>`;
+                } else {
+                    inputsHTML = `
+                        <div class="prediction-box">
+                            <input type="number" class="input-score" id="pred-l-${match.id}" min="0" value="${matchPred.l}">
+                            <span class="vs-text">VS</span>
+                            <input type="number" class="input-score" id="pred-v-${match.id}" min="0" value="${matchPred.v}">
+                        </div>`;
+                }
+
+                let adminPanelHTML = adminModeActive ? `
+                    <div class="admin-panel">
+                        <h4>⚙️ Establecer Marcador Oficial (Admin)</h4>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" style="width:50px; text-align:center;" id="real-l-${match.id}" value="${realScore ? realScore.l : ''}" onchange="saveRealResult(${match.id})">
+                            <span>VS</span>
+                            <input type="number" style="width:50px; text-align:center;" id="real-v-${match.id}" value="${realScore ? realScore.v : ''}" onchange="saveRealResult(${match.id})">
+                        </div>
+                    </div>` : '';
+
+                card.innerHTML = `
+                    <div class="match-meta"><span>📅 ${match.fecha} | Grupo ${match.grupo}</span><span>📍 ${match.sede}</span></div>
+                    <div class="match-body">
+                        <div class="team-box"><div class="team-flag">${match.flagLocal}</div><div class="team-name">${match.local}</div></div>
+                        ${inputsHTML}
+                        <div class="team-box"><div class="team-flag">${match.flagVisitante}</div><div class="team-name">${match.visitante}</div></div>
+                    </div>
+                    ${(!realScore || adminModeActive) ? `
+                    <div class="match-footer">
+                        <span class="save-status" id="status-${match.id}">✓ Guardado</span>
+                        <button class="btn-save" onclick="savePrediction(${match.id})">Guardar</button>
+                    </div>` : ''}
+                    ${adminPanelHTML}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderCalendario() {
+            const container = document.getElementById('calendario-list-container');
+            container.innerHTML = '';
+            const resultadosReales = JSON.parse(localStorage.getItem('resultados_reales')) || {};
+
+            PARTIDOS_INICIALES.forEach(match => {
+                const realScore = resultadosReales[match.id];
+                const scoreHTML = realScore ? 
+                    `<span class="cal-score">${realScore.l} - ${realScore.v}</span>` : 
+                    `<span class="cal-pending">Pendiente</span>`;
+
+                const div = document.createElement('div'); div.className = 'cal-item';
+                div.innerHTML = `
+                    <div>
+                        <div style="font-size:0.8rem; color:#777; margin-bottom:4px;">Gpo ${match.grupo} | ${match.fecha}</div>
+                        <div class="cal-teams">${match.flagLocal} ${match.local} vs ${match.visitante} ${match.flagVisitante}</div>
+                    </div>
+                    <div>${scoreHTML}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        window.savePrediction = function(matchId) {
+            const valL = document.getElementById(`pred-l-${matchId}`).value;
+            const valV = document.getElementById(`pred-v-${matchId}`).value;
+            if (valL === '' || valV === '') { alert("Ingresa ambos marcadores."); return; }
+            let userPreds = JSON.parse(localStorage.getItem(`pred_${currentUser}`)) || {};
+            userPreds[matchId] = { l: parseInt(valL), v: parseInt(valV) };
+            localStorage.setItem(`pred_${currentUser}`, JSON.stringify(userPreds));
+            document.getElementById(`status-${matchId}`).style.opacity = '1';
+            setTimeout(() => { document.getElementById(`status-${matchId}`).style.opacity = '0'; }, 2000);
+        };
+
+        window.saveRealResult = function(matchId) {
+            const valL = document.getElementById(`real-l-${matchId}`).value;
+            const valV = document.getElementById(`real-v-${matchId}`).value;
+            let resultadosReales = JSON.parse(localStorage.getItem('resultados_reales')) || {};
+            if (valL === '' || valV === '') delete resultadosReales[matchId];
+            else resultadosReales[matchId] = { l: parseInt(valL), v: parseInt(valV) };
+            localStorage.setItem('resultados_reales', JSON.stringify(resultadosReales));
+        };
+
+        function computePoints(pred, real) {
+            if (!pred || !real || pred.l === undefined || real.l === undefined) return 0;
+            if (pred.l === real.l && pred.v === real.v) return 3;
+            if (Math.sign(pred.l - pred.v) === Math.sign(real.l - real.v)) return 1;
+            return 0;
+        }
+
+        function calculateLeaderboard() {
+            const resReales = JSON.parse(localStorage.getItem('resultados_reales')) || {};
+            let ranking = [];
+
+            COMPETIDORES_MOCK.forEach(comp => {
+                let pts = 0; let jug = 0;
+                PARTIDOS_INICIALES.forEach(m => {
+                    if (resReales[m.id]) { pts += computePoints(comp.predicciones[m.id], resReales[m.id]); jug++; }
+                });
+                ranking.push({ nombre: comp.nombre, puntos: pts, jugados: jug, isCurrent: false });
+            });
+
+            let uPts = 0; let uJug = 0; const uPreds = JSON.parse(localStorage.getItem(`pred_${currentUser}`)) || {};
+            PARTIDOS_INICIALES.forEach(m => {
+                if (resReales[m.id]) { if (uPreds[m.id]) uPts += computePoints(uPreds[m.id], resReales[m.id]); uJug++; }
+            });
+            ranking.push({ nombre: `${currentUser} (Tú)`, puntos: uPts, jugados: uJug, isCurrent: true });
+
+            ranking.sort((a, b) => b.puntos - a.puntos);
+
+            const tbody = document.getElementById('leaderboard-tbody'); tbody.innerHTML = '';
+            ranking.forEach((p, i) => {
+                const tr = document.createElement('tr');
+                tr.className = `leaderboard-row rank-${i + 1} ${p.isCurrent ? 'current-user' : ''}`;
+                tr.innerHTML = `<td><span class="rank-badge">${i + 1}</span></td><td>${p.nombre}</td><td style="text-align:center;">${p.jugados}</td><td style="text-align:right; font-weight:bold; color:var(--primary);">${p.puntos} pts</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // GENERACIÓN DE PDF
+        window.descargarPDF = function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            
+            doc.setFontSize(18);
+            doc.setTextColor(27, 94, 32); // Verde
+            doc.text("Quiniela Mundial 2026 - Grupo III La Laguna", 14, 20);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Reporte generado el: ${new Date().toLocaleDateString()}`, 14, 28);
+
+            // Preparar datos para la tabla de líderes
+            const resReales = JSON.parse(localStorage.getItem('resultados_reales')) || {};
+            const uPreds = JSON.parse(localStorage.getItem(`pred_${currentUser}`)) || {};
+            
+            // Recolectar a todos los usuarios
+            let allUsers = [...COMPETIDORES_MOCK];
+            allUsers.push({ nombre: currentUser, predicciones: uPreds });
+
+            // Tabla 1: Resumen de Puntos
+            let rankingData = [];
+            allUsers.forEach(u => {
+                let pts = 0; let jug = 0;
+                PARTIDOS_INICIALES.forEach(m => {
+                    if (resReales[m.id] && u.predicciones[m.id]) {
+                        pts += computePoints(u.predicciones[m.id], resReales[m.id]);
+                        jug++;
+                    }
+                });
+                rankingData.push([u.nombre, jug, pts]);
+            });
+            rankingData.sort((a, b) => b[2] - a[2]);
+
+            doc.autoTable({
+                startY: 35,
+                head: [['Participante', 'Partidos Jugados', 'Puntos Totales']],
+                body: rankingData,
+                theme: 'grid',
+                headStyles: { fillColor: [27, 94, 32] }
+            });
+
+            // Tabla 2: Detalle de Predicciones por Partido
+            let finalY = doc.lastAutoTable.finalY + 15;
+            doc.setFontSize(14);
+            doc.setTextColor(27, 94, 32);
+            doc.text("Detalle de Pronósticos", 14, finalY);
+
+            let predsData = [];
+            PARTIDOS_INICIALES.forEach(match => {
+                let row = [`G${match.grupo}: ${match.local} vs ${match.visitante}`];
+                allUsers.forEach(u => {
+                    const p = u.predicciones[match.id];
+                    row.push(p ? `${p.l} - ${p.v}` : 'S/P');
+                });
+                predsData.push(row);
+            });
+
+            let headRow = ['Partido'];
+            allUsers.forEach(u => headRow.push(u.nombre));
+
+            doc.autoTable({
+                startY: finalY + 5,
+                head: [headRow],
+                body: predsData,
+                theme: 'striped',
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [251, 192, 45], textColor: [0,0,0] }
+            });
+
+            doc.save("Reporte_Quiniela_LaLaguna.pdf");
+        };
+
+        init();
     </script>
 </body>
 </html>
